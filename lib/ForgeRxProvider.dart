@@ -29,7 +29,7 @@ class ForgeRxProvider {
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress));
     
-    return MakeFutrueToStream().ob(stream, PublishSubject<ForgeData<T>>());
+    return MakeFutrueToStream().ob(stream, PublishSubject<ForgeData<T>>(), decode);
   }
 
   PublishSubject<ForgeData<T>> post<T>(String path,

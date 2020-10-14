@@ -25,7 +25,7 @@ class ForgeStreamProvider {
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress));
 
-    return MakeFutrueToStream().ob(stream, StreamController()).stream;
+    return MakeFutrueToStream().ob(stream, StreamController(), decode).stream;
   }
 
   Stream<ForgeData<T>> post<T>(String path,
@@ -45,7 +45,7 @@ class ForgeStreamProvider {
         onReceiveProgress: onReceiveProgress);
 
     return MakeFutrueToStream()
-        .ob(Stream.fromFuture(future), StreamController())
+        .ob(Stream.fromFuture(future), StreamController(), decode)
         .stream;
   }
 }
@@ -68,6 +68,9 @@ class ParseData {
         } catch (e) {
           throw ForgeError.parseWrong(res);
         }
+      }
+      else {
+        return forge;
       }
     } else {
       throw ForgeError(response: res, error: forge.message);
