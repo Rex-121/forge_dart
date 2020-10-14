@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:forge/ForgeData.dart';
 import 'package:forge/ForgeOptions.dart';
 import 'package:forge/ForgeProvider.dart';
+import 'package:forge/ForgeRxProvider.dart';
+import 'package:forge/ForgeStreamProvider.dart';
 
 import 'ApiAddress.dart';
 import 'testData.dart';
@@ -73,7 +75,25 @@ void main() {
   test("Stream", () async {
     ForgeStreamProvider http = ForgeStreamProvider(op: httpOptions);
 
-    var params = {'loginName': "17191220337", "pwd": "fad"};
+    var params = {'loginName': phone, "pwd": "fad"};
+
+    http.post("/user/checkPass", data: params).listen((event) {
+      print(event);
+    }, onError: (e) {
+      print("error " + e.message);
+    }, onDone: () {
+      print("done");
+    });
+
+    await Future.delayed(Duration(minutes: 10));
+    // print(z.)
+  }, timeout: Timeout(Duration(seconds: 12)));
+
+  test("Rx", () async {
+    
+    ForgeRxProvider http = ForgeRxProvider(op: httpOptions);
+
+    var params = {'loginName': phone, "pwd": "fad"};
 
     http.post("/user/checkPass", data: params).listen((event) {
       print(event);
