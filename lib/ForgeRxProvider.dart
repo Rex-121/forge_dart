@@ -48,7 +48,7 @@ class ForgeRxProvider {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress);
 
-    return MakeFutrueToStream().ob(Stream.fromFuture(future), PublishSubject<ForgeData<T>>());
+    return MakeFutrueToStream().ob(Stream.fromFuture(future), PublishSubject<ForgeData<T>>(), decode);
   }
 
 }
