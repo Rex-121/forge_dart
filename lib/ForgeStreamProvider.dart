@@ -3,14 +3,16 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:forge/ForgeData.dart';
 import 'package:forge/ForgeError.dart';
+import 'package:forge/ForgeInterceptors.dart';
 import 'package:forge/ForgeOptions.dart';
 import 'package:forge/ForgeProvider.dart';
 
-class ForgeStreamProvider {
+class ForgeStreamProvider with ForgeMixin {
   ForgeProvider provider;
 
-  ForgeStreamProvider({ForgeOptions op}) {
+  ForgeStreamProvider({ForgeOptions op, List<ForgeInterceptor> interceptors}) {
     provider = ForgeProvider(op: op);
+    this.forgeIntercept = interceptors;
   }
 
   Stream<ForgeData<T>> get<T>(String path,
@@ -25,7 +27,10 @@ class ForgeStreamProvider {
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress));
 
-    return MakeFutrueToStream().ob(stream, StreamController(), decode).stream;
+    return MakeFutrueToStream(StreamController(),
+            interceptors: forgeInterceptors)
+        .ob(stream, decode)
+        .stream;
   }
 
   Stream<ForgeData<T>> post<T>(String path,
@@ -44,8 +49,9 @@ class ForgeStreamProvider {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress);
 
-    return MakeFutrueToStream()
-        .ob(Stream.fromFuture(future), StreamController(), decode)
+    return MakeFutrueToStream(StreamController(),
+            interceptors: forgeInterceptors)
+        .ob(Stream.fromFuture(future), decode)
         .stream;
   }
 }
@@ -68,8 +74,7 @@ class ParseData {
         } catch (e) {
           throw ForgeError.parseWrong(res);
         }
-      }
-      else {
+      } else {
         return forge;
       }
     } else {
@@ -78,17 +83,44 @@ class ParseData {
   }
 }
 
-class MakeFutrueToStream {
-  StreamController<ForgeData<T>> ob<T>(
-      Stream<Response<dynamic>> stream, StreamController<ForgeData<T>> con,
+class MakeFutrueToStream<T> {
+  List<ForgeInterceptor> _interceptors;
+
+  StreamController<ForgeData<T>> controller;
+
+  MakeFutrueToStream(this.controller, {List<ForgeInterceptor> interceptors})
+      : _interceptors = interceptors;
+
+  StreamController<ForgeData<T>> ob(Stream<Response<dynamic>> stream,
       [T decode(res)]) {
     stream.listen((event) {
       try {
-        con.add(ParseData().forgeData(event, decode));
+        _remakeData(ParseData().forgeData(event, decode));
       } catch (e) {
-        con.addError(e);
+        _remakeError(e);
       }
-    }, onError: con.addError, onDone: con.close);
-    return con;
+    }, onError: _remakeError, onDone: controller.close);
+    return controller;
+  }
+
+  void _remakeError(dynamic error) {
+    var newError = error;
+    _interceptors?.forEach((element) {
+      newError = element.onError(error);
+    });
+
+    controller.addError(newError);
+  }
+
+  void _remakeData(ForgeData<T> data) async {
+    var newData = data;
+    try {
+      _interceptors?.forEach((element) {
+        newData = element.onData(newData);
+      });
+      controller.add(newData);
+    } catch (e) {
+      _remakeError(e);
+    }
   }
 }

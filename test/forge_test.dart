@@ -93,7 +93,7 @@ void main() {
     
     ForgeRxProvider http = ForgeRxProvider(op: httpOptions);
 
-    var params = {'loginName': phone, "pwd": "fad"};
+    var params = {'loginName': phone, "pwd": "f1eee8efd4d339bb0b21e8be4f786b12"};
 
     http.post("/user/checkPass", data: params).listen((event) {
       print(event);
@@ -106,4 +106,8 @@ void main() {
     await Future.delayed(Duration(minutes: 10));
     // print(z.)
   }, timeout: Timeout(Duration(seconds: 12)));
+
+
 }
+
+

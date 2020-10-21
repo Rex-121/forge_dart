@@ -21,7 +21,7 @@ class ForgeError implements Exception {
 
   @override
   String toString() {
-    var msg = 'ForgeError : $message';
+    var msg = 'ForgeError : $message, code: $code';
     if (error is Error) {
       msg += '\n${error.stackTrace}';
     }

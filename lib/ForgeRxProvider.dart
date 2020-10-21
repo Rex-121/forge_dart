@@ -2,19 +2,20 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:forge/ForgeData.dart';
+import 'package:forge/ForgeInterceptors.dart';
 import 'package:forge/ForgeOptions.dart';
 import 'package:forge/ForgeProvider.dart';
 import 'package:forge/ForgeStreamProvider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 
-class ForgeRxProvider {
+class ForgeRxProvider with ForgeMixin {
   ForgeProvider provider;
 
-  ForgeRxProvider({ForgeOptions op}) {
+  ForgeRxProvider({ForgeOptions op, List<ForgeInterceptor> interceptors}) {
     provider = ForgeProvider(op: op);
+    this.forgeIntercept = interceptors;
   }
-
 
   PublishSubject<ForgeData<T>> get<T>(String path,
       {Map<String, dynamic> queryParameters,
@@ -22,14 +23,15 @@ class ForgeRxProvider {
       CancelToken cancelToken,
       ProgressCallback onReceiveProgress,
       T decode(res)}) {
-
     var stream = Stream.fromFuture(this.provider.get(path,
         queryParameters: queryParameters,
         options: options,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress));
-    
-    return MakeFutrueToStream().ob(stream, PublishSubject<ForgeData<T>>(), decode);
+
+    return MakeFutrueToStream(PublishSubject<ForgeData<T>>(),
+            interceptors: forgeInterceptors)
+        .ob(stream, decode);
   }
 
   PublishSubject<ForgeData<T>> post<T>(String path,
@@ -48,7 +50,8 @@ class ForgeRxProvider {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress);
 
-    return MakeFutrueToStream().ob(Stream.fromFuture(future), PublishSubject<ForgeData<T>>(), decode);
+    return MakeFutrueToStream(PublishSubject<ForgeData<T>>(),
+            interceptors: forgeInterceptors)
+        .ob(Stream.fromFuture(future), decode);
   }
-
 }
