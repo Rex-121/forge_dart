@@ -73,7 +73,7 @@ class ParseData {
         return forge;
       }
     } else {
-      throw ForgeError(response: res, error: forge.message);
+      throw ForgeError(response: res, error: forge.message, code: forge.code);
     }
   }
 }

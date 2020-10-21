@@ -4,6 +4,7 @@ class ForgeError implements Exception {
   ForgeError({
     this.response,
     this.error,
+    this.code
   });
 
   /// Response info, it may be `null` if the request can't reach to
@@ -13,6 +14,8 @@ class ForgeError implements Exception {
   /// The original error/exception object; It's usually not null when `type`
   /// is DioErrorType.DEFAULT
   dynamic error;
+
+  int code;
 
   String get message => (error?.toString() ?? '');
 
@@ -25,6 +28,6 @@ class ForgeError implements Exception {
     return msg;
   }
 
-  static ForgeError parseWrong([Response res]) => ForgeError(error: "解析错误", response: res);
+  static ForgeError parseWrong([Response res]) => ForgeError(error: "解析错误", response: res, code: -10087);
   
 }
