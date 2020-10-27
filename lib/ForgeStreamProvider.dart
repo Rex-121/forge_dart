@@ -106,7 +106,12 @@ class MakeFutrueToStream<T> {
   void _remakeError(dynamic error) {
     var newError = error;
     _interceptors?.forEach((element) {
-      newError = element.onError(error);
+      if (error is DioError) {
+        newError = element
+            .onError(ForgeError(response: error.response, error: error.error));
+      } else {
+        newError = element.onError(error);
+      }
     });
 
     controller.addError(newError);
