@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:forge/ForgeData.dart';
@@ -62,7 +63,7 @@ class ParseData {
   ForgeData<T> forgeData<T>(Response res, [T decode(res)]) {
     ForgeData forge;
     try {
-      forge = ForgeData.fromJson(res.data, (a) => a);
+      forge = ForgeData.fromJson(jsonDecode(res.data), (a) => a);
     } catch (e) {
       throw ForgeError.parseWrong(res);
     }
