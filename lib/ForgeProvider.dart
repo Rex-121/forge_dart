@@ -8,9 +8,9 @@ import 'package:forge/ForgeOptions.dart';
 class ForgeProviderFactory {
 
   static Dio Make({ForgeOptions op}) {
-    if (Platform.isAndroid || Platform.isIOS) {
-      return _ForgeProvider(op: op);
-    }
+    // if (Platform.isAndroid || Platform.isIOS) {
+    //   return _ForgeProvider(op: op);
+    // }
     return _WebForgeProvider(op: op);
   }
 
