@@ -10,10 +10,10 @@ import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 
 class ForgeRxProvider with ForgeMixin {
-  ForgeProvider provider;
+  Dio provider;
 
   ForgeRxProvider({ForgeOptions op, List<ForgeInterceptor> interceptors}) {
-    provider = ForgeProvider(op: op);
+    provider = ForgeProviderFactory.Make(op: op);
     this.forgeIntercept = interceptors;
   }
 

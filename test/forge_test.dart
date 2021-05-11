@@ -16,7 +16,7 @@ ForgeOptions httpOptions =
 
 void main() {
   test("Wrong Psw", () async {
-    ForgeProvider http = ForgeProvider(op: httpOptions);
+    Dio http = ForgeProviderFactory.Make(op: httpOptions);
 
     var params = {'loginName': "17191220337", "pwd": "fad"};
 

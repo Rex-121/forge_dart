@@ -8,10 +8,10 @@ import 'package:forge/ForgeOptions.dart';
 import 'package:forge/ForgeProvider.dart';
 
 class ForgeStreamProvider with ForgeMixin {
-  ForgeProvider provider;
+  Dio provider;
 
   ForgeStreamProvider({ForgeOptions op, List<ForgeInterceptor> interceptors}) {
-    provider = ForgeProvider(op: op);
+    provider = ForgeProviderFactory.Make(op: op);
     this.forgeIntercept = interceptors;
   }
 
