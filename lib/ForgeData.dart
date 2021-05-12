@@ -1,17 +1,14 @@
-
 import 'package:json_annotation/json_annotation.dart';
 
 part 'ForgeData.g.dart';
 
 @JsonSerializable(genericArgumentFactories: true)
 class ForgeData<T> extends Object {
-  @JsonKey()
   /// 状态码
+  @JsonKey(name: 'result', nullable: false)
   int code;
 
-
-  @JsonKey()
-  /// 
+  @JsonKey(name: 'msg', nullable: true)
   String message;
 
   @JsonKey(name: 'data', nullable: true)
