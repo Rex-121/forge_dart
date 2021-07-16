@@ -6,28 +6,29 @@ import 'package:forge/ForgeError.dart';
 import 'package:forge/ForgeInterceptors.dart';
 import 'package:forge/ForgeOptions.dart';
 import 'package:forge/ForgeProvider.dart';
+import 'package:rxdart/subjects.dart';
 
 class ForgeStreamProvider with ForgeMixin {
-  Dio provider;
+  late Dio provider;
 
-  ForgeStreamProvider({ForgeOptions op, List<ForgeInterceptor> interceptors}) {
+  ForgeStreamProvider({ForgeOptions? op, List<ForgeInterceptor>? interceptors}) {
     provider = ForgeProviderFactory.Make(op: op);
     this.forgeIntercept = interceptors;
   }
 
   Stream<ForgeData<T>> get<T>(String path,
-      {Map<String, dynamic> queryParameters,
-      Options options,
-      CancelToken cancelToken,
-      ProgressCallback onReceiveProgress,
-      T decode(res)}) {
+      {Map<String, dynamic>? queryParameters,
+      Options? options,
+      CancelToken? cancelToken,
+      ProgressCallback? onReceiveProgress,
+      T decode(res)?}) {
     var stream = Stream.fromFuture(this.provider.get(path,
         queryParameters: queryParameters,
         options: options,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress));
 
-    return MakeFutrueToStream(StreamController(),
+    return MakeFutrueToStream<T>(PublishSubject<ForgeData<T>>(),
             interceptors: forgeInterceptors)
         .ob(stream, decode)
         .stream;
@@ -35,12 +36,12 @@ class ForgeStreamProvider with ForgeMixin {
 
   Stream<ForgeData<T>> post<T>(String path,
       {data,
-      Map<String, dynamic> queryParameters,
-      Options options,
-      CancelToken cancelToken,
-      ProgressCallback onSendProgress,
-      ProgressCallback onReceiveProgress,
-      T decode(res)}) {
+      Map<String, dynamic>? queryParameters,
+      Options? options,
+      CancelToken? cancelToken,
+      ProgressCallback? onSendProgress,
+      ProgressCallback? onReceiveProgress,
+      T decode(res)?}) {
     var future = this.provider.post(path,
         data: data,
         queryParameters: queryParameters,
@@ -49,7 +50,7 @@ class ForgeStreamProvider with ForgeMixin {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress);
 
-    return MakeFutrueToStream(StreamController(),
+    return MakeFutrueToStream<T>(PublishSubject<ForgeData<T>>(),
             interceptors: forgeInterceptors)
         .ob(Stream.fromFuture(future), decode)
         .stream;
@@ -59,7 +60,7 @@ class ForgeStreamProvider with ForgeMixin {
 /// 解析数据
 class ParseData {
 // ignore: missing_return
-  ForgeData<T> forgeData<T>(Response res, [T decode(res)]) {
+  ForgeData<T> forgeData<T>(Response res, [T decode(res)?]) {
     ForgeData forge;
     try {
       forge = ForgeData.fromJson(res.data, (a) => a);
@@ -70,12 +71,12 @@ class ParseData {
     if (forge.success) {
       if (decode != null) {
         try {
-          return ForgeData.fromJson(res.data, decode);
+          return ForgeData<T>.fromJson(res.data, decode);
         } catch (e) {
           throw ForgeError.parseWrong(res);
         }
       } else {
-        return forge;
+        return forge as ForgeData<T>;
       }
     } else {
       throw ForgeError(response: res, error: forge.message, code: forge.code);
@@ -84,15 +85,15 @@ class ParseData {
 }
 
 class MakeFutrueToStream<T> {
-  List<ForgeInterceptor> _interceptors;
+  List<ForgeInterceptor>? _interceptors;
 
-  StreamController<ForgeData<T>> controller;
+  PublishSubject<ForgeData<T>> controller;
 
-  MakeFutrueToStream(this.controller, {List<ForgeInterceptor> interceptors})
+  MakeFutrueToStream(this.controller, {List<ForgeInterceptor>? interceptors})
       : _interceptors = interceptors;
 
-  StreamController<ForgeData<T>> ob(Stream<Response<dynamic>> stream,
-      [T decode(res)]) {
+  PublishSubject<ForgeData<T>> ob(Stream<Response<dynamic>> stream,
+      [T decode(res)?]) {
     stream.listen((event) {
       try {
         _remakeData(ParseData().forgeData(event, decode));
@@ -121,7 +122,7 @@ class MakeFutrueToStream<T> {
     var newData = data;
     try {
       _interceptors?.forEach((element) {
-        newData = element.onData(newData);
+        newData = element.onData(newData) as ForgeData<T>;
       });
       controller.add(newData);
     } catch (e) {

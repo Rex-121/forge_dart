@@ -6,8 +6,8 @@ abstract class ForgeMixin {
 
   List<ForgeInterceptor> get forgeInterceptors => _interceptors;
 
-  set forgeIntercept(List<ForgeInterceptor> c) {
-    _interceptors = c;
+  set forgeIntercept(List<ForgeInterceptor>? c) {
+    _interceptors = c ?? [];
   }
 }
 
@@ -15,25 +15,25 @@ typedef ForgeInterceptorErrorCallback = ForgeError Function(ForgeError e);
 typedef ForgeInterceptorSuccessCallback = ForgeData Function(ForgeData e);
 
 class ForgeInterceptor {
-  final ForgeInterceptorErrorCallback _onError;
-  final ForgeInterceptorSuccessCallback _onData;
+  final ForgeInterceptorErrorCallback? _onError;
+  final ForgeInterceptorSuccessCallback? _onData;
 
   ForgeInterceptor({
-    ForgeInterceptorSuccessCallback onData,
-    ForgeInterceptorErrorCallback onError,
+    ForgeInterceptorSuccessCallback? onData,
+    ForgeInterceptorErrorCallback? onError,
   })  : _onData = onData,
         _onError = onError;
 
   ForgeData onData(ForgeData data) {
     if (_onData != null) {
-      return _onData(data);
+      return _onData!(data);
     }
     return data;
   }
 
   ForgeError onError(ForgeError e) {
     if (_onError != null) {
-      return _onError(e);
+      return _onError!(e);
     }
     return e;
   }

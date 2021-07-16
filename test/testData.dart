@@ -4,10 +4,10 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'testData.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(genericArgumentFactories: true)
 class TestingData {
 
-@JsonKey()
+@JsonKey(name: 'title')
 String title;
 
 TestingData(this.title);

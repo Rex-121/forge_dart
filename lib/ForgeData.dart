@@ -3,18 +3,18 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'ForgeData.g.dart';
 
-@JsonSerializable(genericArgumentFactories: true)
+
+@JsonSerializable(genericArgumentFactories: true, checked: true)
 class ForgeData<T> extends Object {
-  @JsonKey()
+
   /// 状态码
-  int code;
+  @JsonKey(name: 'result')
+  int? code;
 
+  @JsonKey(name: 'msg')
+  String? message;
 
-  @JsonKey()
-  /// 
-  String message;
-
-  @JsonKey(name: 'data', nullable: true)
+  @JsonKey(name: 'data')
   T data;
 
   /// 是否成功
@@ -26,10 +26,24 @@ class ForgeData<T> extends Object {
     this.data,
   );
 
-  factory ForgeData.fromJson(
-          Map<String, dynamic> srcJson, T Function(Object) fromJsonT) =>
-      _$ForgeDataFromJson(srcJson, fromJsonT);
+  factory ForgeData.fromxJson(Map<String, dynamic> json,
+      T Function(Map<String, dynamic> json) fromJsonT) {
+    return ForgeData.fromJson(
+        json, (json) => fromJsonT((json as Map<String, dynamic>?) ?? {}));
+  }
 
-  Map<String, dynamic> toJson(Object Function(T) toJsonT) =>
+  // factory ForgeData.justValue(Map<String, dynamic> json) {
+  //   return ForgeData.fromJson(
+  //       json, (json) {
+  //         if (json == null) return null;
+  //         return null;
+  //       });
+  // }
+
+  factory ForgeData.fromJson(
+          Map<String, dynamic> json, T Function(Object? json) fromJsonT) =>
+      _$ForgeDataFromJson(json, fromJsonT);
+
+  Map<String, dynamic> toJson(Object? Function(T value) toJsonT) =>
       _$ForgeDataToJson(this, toJsonT);
 }
