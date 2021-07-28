@@ -26,7 +26,7 @@ void main() {
     // final response = await dio.get(
     //     'http://appcourse.roobo.com.cn/student/v1/course/5463/lesson/6867/round/list');
     // print(response.data);
-    Dio http = ForgeProviderFactory.Make(op: httpOptions);
+    Dio http = ForgeProviderFactory.make(op: httpOptions);
 
     // var params = {'loginName': "17191220337", "pwd": "fad"};
 

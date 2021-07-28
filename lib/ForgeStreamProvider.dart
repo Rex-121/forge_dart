@@ -12,7 +12,7 @@ class ForgeStreamProvider with ForgeMixin {
   late Dio provider;
 
   ForgeStreamProvider({ForgeOptions? op, List<ForgeInterceptor>? interceptors}) {
-    provider = ForgeProviderFactory.Make(op: op);
+    provider = ForgeProviderFactory.make(op: op);
     this.forgeIntercept = interceptors;
   }
 

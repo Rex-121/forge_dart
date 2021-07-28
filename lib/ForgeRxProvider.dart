@@ -15,7 +15,7 @@ class ForgeRxProvider with ForgeMixin {
   ForgeRxProvider(
       {required ForgeOptions? op,
       List<ForgeInterceptor> interceptors = const []}) {
-    provider = ForgeProviderFactory.Make(op: op);
+    provider = ForgeProviderFactory.make(op: op);
     this.forgeIntercept = interceptors;
   }
 
@@ -36,24 +36,24 @@ class ForgeRxProvider with ForgeMixin {
         .ob(stream, decode);
   }
 
-  // PublishSubject<ForgeData<T>> post<T>(String path,
-  //     {data,
-  //     Map<String, dynamic> queryParameters,
-  //     Options options,
-  //     CancelToken cancelToken,
-  //     ProgressCallback onSendProgress,
-  //     ProgressCallback onReceiveProgress,
-  //     T decode(res)}) {
-  //   var future = this.provider.post(path,
-  //       data: data,
-  //       queryParameters: queryParameters,
-  //       options: options,
-  //       cancelToken: cancelToken,
-  //       onSendProgress: onSendProgress,
-  //       onReceiveProgress: onReceiveProgress);
+  PublishSubject<ForgeData<T>> post<T>(String path,
+      {data,
+      Map<String, dynamic>? queryParameters,
+      Options? options,
+      CancelToken? cancelToken,
+      ProgressCallback? onSendProgress,
+      ProgressCallback? onReceiveProgress,
+      T decode(res)?}) {
+    var future = this.provider.post(path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
 
-  //   return MakeFutrueToStream(PublishSubject<ForgeData<T>>(),
-  //           interceptors: forgeInterceptors)
-  //       .ob(Stream.fromFuture(future), decode);
-  // }
+    return MakeFutrueToStream(PublishSubject<ForgeData<T>>(),
+            interceptors: forgeInterceptors)
+        .ob(Stream.fromFuture(future), decode);
+  }
 }
