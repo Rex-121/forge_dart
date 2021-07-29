@@ -83,7 +83,31 @@ void main() {
     }, onDone: () {
       print("done");
     }, onError: (e) {
+      print("error");
       print(e);
+    });
+
+    await Future.delayed(Duration(minutes: 29));
+  });
+
+
+  test("RXxx", () async {
+
+ForgeOptions httpOptionsx =
+        ForgeOptions("http://appcourse.roobo.com.cn/student/v1", contentType: "application/json", headers: {
+          "Authorization":"GoRoobo eyJhcHBQYWNrYWdlSUQiOiJhVWxhOEhLQWgiLCJhcHBJRCI6Ik9HSTFaV0l5TkdJNE0yVTMiLCJ0cyI6MjUsImF1dGgiOnsiYXBwVXNlcklEIjpudWxsLCJhY2Nlc3NUb2tlbiI6bnVsbCwiYWNjZXNzVG9rZW5FeHBpcmVzIjpudWxsLCJyZWZyZXNoVG9rZW4iOm51bGwsInJlZnJlc2hUb2tlbkV4cGlyZXMiOm51bGx9LCJhcHAiOnsidmlhIjoiV2ViIiwiYXBwIjoiIiwiYXZlciI6IiIsImN2ZXIiOiIiLCJtb2RlbCI6IiIsImxvY2FsIjoiZW5fVVMiLCJjaCI6IjEwMDAwIiwibmV0IjoiIn19.6085942a88a3848581d84de930ebbfd5"
+        });
+
+    ForgeStreamProvider http = ForgeStreamProvider(op: httpOptionsx);
+
+    // var params = {'loginName': phone, "pwd": "fad"};
+
+  
+    http.post("/user/getAuthcode", data: {"phone" : "18511234520", "pcode" : "+86", "lang": "zh", "allow": "authcode-login"}).listen((event) {
+      print("fasdgasdf");
+      print(event.toString());
+    }, onError: (error) {
+      print(error);
     });
 
     await Future.delayed(Duration(minutes: 29));

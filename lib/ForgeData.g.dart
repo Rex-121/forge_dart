@@ -12,7 +12,7 @@ ForgeData<T> _$ForgeDataFromJson<T>(
 ) {
   return $checkedNew('ForgeData', json, () {
     final val = ForgeData<T>(
-      $checkedConvert(json, 'code', (v) => v as int?),
+      $checkedConvert(json, 'result', (v) => v as int?),
       $checkedConvert(json, 'msg', (v) => v as String?),
       $checkedConvert(json, 'data', (v) => fromJsonT(v)),
     );
